@@ -74,7 +74,12 @@ router.post("/contacts/new", jsonParser, (req, res) => {
 });
 
 router.post("/contacts/all", jsonParser, (req, res) => {
+  console.log(req.body.user_id);
   Profile.findOne({ user_id: req.body.user_id }, async (err, profile) => {
+    if(err) return res.status(400).send({ msg: "This user does not exists" });
+
+    if(!profile) return res.status(400).send({ msg: "This user does not exists" });
+
     let result = await Promise.all(
       profile.contacts.map(async (contact_id) => {
         let chat = await Chat.findOne({ user_ids: { $in: [contact_id] } });

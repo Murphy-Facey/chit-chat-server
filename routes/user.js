@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const { passwordStrength } = require("check-password-strength");
 
 var jsonParser = bodyParser.json();
-
+ 
 const User = require("../models/User");
 const Profile = require("../models/Profile");
 const Chat = require("../models/Chat");
@@ -19,7 +19,6 @@ router.post("/", jsonParser, (req, res) => {
       first_name: { $regex: new RegExp(`^${searchInput}`, "i") },
     },
     (err, count) => {
-      // console.log(searchInput);
 
       Profile.find({
         user_id: { $ne: id },
@@ -51,7 +50,7 @@ router.post("/", jsonParser, (req, res) => {
   );
 });
 
-router.post("/contacts/new", jsonParser, (req, res) => {
+router.post("/contact/new", jsonParser, (req, res) => {
   let { user_id, contact_id } = req.body;
   // console.log(user_id);
   Profile.updateOne(
@@ -73,7 +72,7 @@ router.post("/contacts/new", jsonParser, (req, res) => {
   res.status(200).send({ msg: "something" });
 });
 
-router.post("/contacts/all", jsonParser, (req, res) => {
+router.post("/contact/all", jsonParser, (req, res) => {
   console.log(req.body.user_id);
   Profile.findOne({ user_id: req.body.user_id }, async (err, profile) => {
     if(err) return res.status(400).send({ msg: "This user does not exists" });
@@ -117,7 +116,6 @@ router.post("/contacts/all", jsonParser, (req, res) => {
         };
       })
     );
-    // console.log(result);
     return res.status(200).send(result);
   });
 });
@@ -191,10 +189,10 @@ router.post("/register", jsonParser, (req, res) => {
       }
 
       let pStrength = passwordStrength(password);
-      if(pStrength.value == "Too weak" || pStrength.value == "Weak") {
+      if(pStrength.value == "Too weak") {
         return res.status(400).send({
           fields: ["password"],
-          msg: "This password does not meet the strength requirments"
+          msg: "This password does not meet the strength requirements"
         });
       }
 
@@ -270,7 +268,7 @@ router.post("/login", jsonParser, (req, res) => {
         }
         return res.status(401).send({
           fields: ["password"],
-          msg: "Incorrect You"
+          msg: "The password entered is incorrect"
         });
       });
     });
